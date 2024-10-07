@@ -1,10 +1,8 @@
 package ovchip;
 
-import ovchip.dao.AdresDAO;
-import ovchip.dao.AdresDAOPsql;
-import ovchip.dao.ReizigerDAO;
-import ovchip.dao.ReizigerDAOPsql;
+import ovchip.dao.*;
 import ovchip.domain.Adres;
+import ovchip.domain.OVChipkaart;
 import ovchip.domain.Reiziger;
 
 import java.sql.*;
@@ -20,13 +18,13 @@ public class Main {
         conn = startConnection();
 
         // Test de verbinding door een query uit te voeren
-        testConnection(conn);
+        // testConnection(conn);
 
         // Maak een AdresDAO aan en test de CRUD-operaties
         AdresDAO adresDAO = new AdresDAOPsql(conn);
         ReizigerDAO reizigerDAO = new ReizigerDAOPsql(conn, adresDAO);
-        testAdresDAO(reizigerDAO, adresDAO);
-
+        OVChipkaartDAOPsql ovChipkaartDAO = new OVChipkaartDAOPsql(conn);
+        testOVChipkaartDAO(reizigerDAO, ovChipkaartDAO);
 
         // Sluit de verbinding met de database
         closeConnection(conn);
@@ -121,6 +119,34 @@ public class Main {
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void testOVChipkaartDAO(ReizigerDAO reizigerDAO, OVChipkaartDAO ovChipkaartDAO) throws SQLException {
+
+        Reiziger reiziger = new Reiziger(6000, "Piet", "", "Bakker", java.sql.Date.valueOf("1995-05-15"));
+        reizigerDAO.save(reiziger);
+
+        OVChipkaart ov = new OVChipkaart(54321, java.sql.Date.valueOf("2027-01-01"), 1, 30.00, reiziger);
+        ov.setReiziger(reiziger);
+        ovChipkaartDAO.save(ov);
+        reiziger.addOVChipkaart(ov);
+
+
+        List<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger(reiziger);
+        System.out.println("OVChipkaarten voor Reiziger " + reiziger.getId() + ": " + ovChipkaarten);
+
+
+        ov.setSaldo(60.00);
+        ovChipkaartDAO.update(ov);
+        List<OVChipkaart> ovChipkaartenAfterUpdating = ovChipkaartDAO.findByReiziger(reiziger);
+        System.out.println("OVChipkaarten na updaten voor Reiziger " + reiziger.getId() + ": " + ovChipkaartenAfterUpdating);
+
+        ovChipkaartDAO.delete(ov);
+        List<OVChipkaart> ovChipkaartenAfterDeletion = ovChipkaartDAO.findByReiziger(reiziger);
+        System.out.println("OVChipkaarten na verwijderen voor Reiziger " + reiziger.getId() + ": " + ovChipkaartenAfterDeletion);
+
+
+        reizigerDAO.delete(reiziger);
     }
 
 }

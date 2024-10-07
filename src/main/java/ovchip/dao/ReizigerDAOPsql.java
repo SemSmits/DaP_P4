@@ -1,6 +1,7 @@
 package ovchip.dao;
 
 import ovchip.domain.Adres;
+import ovchip.domain.OVChipkaart;
 import ovchip.domain.Reiziger;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import java.util.List;
 public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection con;
     private AdresDAO adresDAO;
+    private OVChipkaartDAO ovChipkaartDAO;
 
     public ReizigerDAOPsql(Connection connection, AdresDAO adresDAO) {
         this.con = connection;
@@ -35,6 +37,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             if (reiziger.getAdres() != null) {
                 adresDAO.save(reiziger.getAdres());
+            }
+
+            for (OVChipkaart ovChipkaart : reiziger.getOvChipkaart()) {
+                ovChipkaartDAO.save(ovChipkaart);
             }
 
             return true;
@@ -59,6 +65,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                 adresDAO.save(reiziger.getAdres());
             }
 
+            for (OVChipkaart ovChipkaart : reiziger.getOvChipkaart()) {
+                ovChipkaartDAO.update(ovChipkaart);
+            }
+
             return true;
         } catch (Exception e) {
             return false;
@@ -68,6 +78,10 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     @Override
     public boolean delete(Reiziger reiziger) {
         try{
+            for (OVChipkaart ovChipkaart : reiziger.getOvChipkaart()) {
+                ovChipkaartDAO.delete(ovChipkaart);
+            }
+
             String query = "DELETE FROM Reiziger WHERE reiziger_id = ?";
             PreparedStatement preparedStatement = con.prepareStatement(query);
             preparedStatement.setInt(1, reiziger.getId());
@@ -93,6 +107,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
                         resultSet.getString("achternaam"),
                         resultSet.getDate("geboortedatum")
                 );
+
+                List<OVChipkaart> ovChipkaarten = ovChipkaartDAO.findByReiziger(reiziger);
+                reiziger.setOvChipkaart(ovChipkaarten);
 
                 Adres adres = adresDAO.findByReiziger(reiziger);
                 reiziger.setAdres(adres);

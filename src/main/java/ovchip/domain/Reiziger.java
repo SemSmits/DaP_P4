@@ -2,6 +2,7 @@ package ovchip.domain;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Reiziger {
     private int id;
@@ -10,7 +11,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private Adres adres;
-    private ArrayList<OVChipkaart> ovChipkaart = new ArrayList<>();
+    private List<OVChipkaart> ovChipkaart = new ArrayList<>();
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
         this.id = id;
@@ -68,6 +69,14 @@ public class Reiziger {
         this.adres = adres;
     }
 
+    public List<OVChipkaart> getOvChipkaart() {
+        return ovChipkaart;
+    }
+
+    public void addOVChipkaart(OVChipkaart ov) {
+        ovChipkaart.add(ov);
+    }
+
     @Override
     public String toString() {
         String volledigeNaam = tussenvoegsel != null && !tussenvoegsel.isEmpty()
@@ -82,5 +91,10 @@ public class Reiziger {
                 ", geb. " + geboortedatum +
                 adresString +
                 '}';
+    }
+
+
+    public void setOvChipkaart(List<OVChipkaart> ovChipkaarten) {
+        this.ovChipkaart = ovChipkaarten;
     }
 }

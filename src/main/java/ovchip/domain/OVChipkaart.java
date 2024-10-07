@@ -9,11 +9,15 @@ public class OVChipkaart {
     private double saldo;
     private Reiziger reiziger;
 
-    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, double saldo) {
+    public OVChipkaart() {
+    }
+
+    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, double saldo, Reiziger reiziger) {
         this.kaartNummer = kaartNummer;
         this.geldigTot = geldigTot;
         this.klasse = klasse;
         this.saldo = saldo;
+        this.reiziger = reiziger;
     }
 
     public int getKaartNummer() {
@@ -24,8 +28,8 @@ public class OVChipkaart {
         this.kaartNummer = kaartNummer;
     }
 
-    public Date getGeldigTot() {
-        return geldigTot;
+    public java.sql.Date getGeldigTot() {
+        return (java.sql.Date) geldigTot;
     }
 
     public void setGeldigTot(Date geldigTot) {
@@ -56,4 +60,14 @@ public class OVChipkaart {
         this.reiziger = reiziger;
     }
 
+    @Override
+    public String toString() {
+        return "OVChipkaart{" +
+                "kaartNummer=" + kaartNummer +
+                ", geldigTot=" + geldigTot +
+                ", klasse=" + klasse +
+                ", saldo=" + saldo +
+                ", reiziger=" + reiziger.getId() +
+                '}';
+    }
 }
